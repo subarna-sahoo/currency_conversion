@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="jumbotron text-center">
+    <div class='row'>
+        <div class='col-sm-12'>
+                <b><h2 align="center">Welcome to Currency Conversion web site</h2></b>
+        </div>
+    </div>
+</div>
+
+<div class='row'>
+    <div class='col-sm-12'>
+        <p><b><h4 align="center">Please login to use the application</h4></b></p>
+    </div>
+</div>
+
+<div class='row'>
+    <div class='col-sm-12' align="center">
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg" >LogIn</a>
+    </div>
+</div>
+
+{% endblock content %}

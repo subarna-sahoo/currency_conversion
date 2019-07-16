@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row">
+ <div class="col-sm-12">
+   <h2 align="center">Login</h2>
+</div>
+</div>
+<br/>
+<br/>
+<br/>
+<br/>
+
+<div class="row">
+   <div class="col-sm-4">
+  </div>
+  <div class="dropdown">
+  <div class="col-sm-8">
+    <form class="dropbtn" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <br/>
+      <br/>
+      <button  align="center" type="submit" class="btn btn-primary">Login</button>
+    </form>
+   </div>
+   </div>
+  </div>
+{% endblock %}
