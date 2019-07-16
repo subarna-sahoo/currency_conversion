@@ -13,7 +13,7 @@ SECRET_KEY = '***REMOVED***'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['3.82.225.118','ec2-3-82-225-118.compute-1.amazonaws.com']
 
 
 # Application definition
