@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+<script>
+{% block jquery %}
+
+$('#refdate').max =  "2019-07-20";
+$('#wait_time').val(2);
+$('#amount').val(1);
+//alert($('#refdate').prop('max'))
+$('#refdate').val(new Date().toISOString().split("T")[0])
+
+//alert(new Date().toISOString().split("T")[0])
+var defaultData = [];
+var labels = [];
+var amount = 1;
+var myChart;
+
+Chart.defaults.global.animationSteps = 50;
+Chart.defaults.global.tooltipYPadding = 16;
+Chart.defaults.global.tooltipCornerRadius = 0;
+Chart.defaults.global.tooltipTitleFontStyle = "normal";
+Chart.defaults.global.tooltipFillColor = "rgba(0,160,0,0.8)";
+Chart.defaults.global.animationEasing = "easeOutBounce";
+Chart.defaults.global.responsive = true;
+Chart.defaults.global.scaleLineColor = "black";
+Chart.defaults.global.scaleFontSize = 16;
+
+ $('#btnSubmit').click(function() {
+     var data = new FormData();
+     var base_curr = $('#base_curr').val()
+     var target_curr = $('#target_curr').val()
+     amount = $('#amount').val() ? $('#amount').val() : 1
+     var wait_time = $('#wait_time').val() ? $('#wait_time').val() : 1
+     var ref_date = $('#refdate').val() ? $('#refdate').val() : new Date().toISOString().split("T")[0]
+
+     data.append('base_curr', base_curr);
+     data.append('target_curr', target_curr);
+     data.append('amount', amount);
+     data.append('wait_time', wait_time);
+     data.append('ref_date', ref_date);
+
+     $.ajax({
+         type: 'POST',
+         url: '/currency/get_rates',
+         data: data,
+         processData: false,
+         contentType: false,
+         success: function(data) {
+            labels = data.dates
+            defaultData = data.rates
+            setChart()
+            setTable()
+
+         },
+        error: function(error_data) {
+            console.log("error")
+            console.log(error_data)
+        }
+     })
+ });
+
+
+
+function setChart(){
+
+    var ctx = document.getElementById('exhange_rate_chart').getContext('2d');
+    if(myChart) {
+      myChart.destroy()
+    }
+    if(defaultData.length > 0) {
+
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'rate',
+                    data: defaultData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1,
+                    fill:false
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:false
+                        }
+                    }]
+                },
+                elements: {
+                    line: {
+                        tension: 0 // disables bezier curves
+                    }
+                }
+
+            }
+
+        })
+    }
+ }
+function setTable(){
+    var container = $('#table-container');
+    container.empty()
+    if(defaultData.length > 0) {
+        container.innerHTML = '';
+        table = $('<table>');
+        table.addClass("table table-bordered")
+        table.append('<thead><td>Day</td><td>Rate</td><td>Total Amount</td>');
+        for (var i=0; i<defaultData.length; i++) {
+            var tr = $('<tr>');
+            tr.append('<td>' + labels[i] + '</td>');
+            tr.append('<td>' + defaultData[i].toFixed(3) + '</td>');
+            tr.append('<td>' + (defaultData[i]*amount).toFixed(2) + '</td>');
+            table.append(tr);
+        }
+        container.append(table);
+
+    }
+    else {
+        container.innerHTML = '';
+    }
+}
+
+
+{% endblock %}
+</script>
+
+{% block content %}
+
+<div class="row">
+    <div class="col-sm-12">
+      <div class="jumbotron text-center">
+        <h4><center><b>Welcome Mr. {{ user.username }}<b><center></h4>
+      </div>
+  </div>
+</div>
+
+<div class="row">
+   <div class="col-sm-12">
+     <div class="col-sm-1">
+     </div>
+      <div class="col-sm-4 left_section">
+        <br/>
+         <div class="row">
+            <div class="col-sm-3">
+               <label>Select From currency<label>
+            </div>
+            <div class="col-sm-1">
+               <select id="base_curr">
+                  {% for item in currency_list %}
+                  <option value="{{ item.symbol }}">{{ item.symbol}} ( {{item.name }})</option>
+                  {% endfor %}
+               </select>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label>Select To currency<label>
+            </div>
+            <div class="col-sm-1">
+               <select id="target_curr">
+                  {% for item in currency_list %}
+                  <option value="{{ item.symbol }}">{{ item.symbol}} ( {{item.name }})</option>
+                  {% endfor %}
+               </select>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+               <label>Amount<label>
+            </div>
+            <div class="col-sm-1">
+                <input type="text" id="amount" min="1">
+            </div>
+         </div>
+         <br>
+         <div class="row">
+            <div class="col-sm-3">
+               <label>Waiting Time<label>
+            </div>
+            <div class="col-sm-1">
+                <input type="text" id="wait_time" min="1">
+            </div>
+         </div>
+         <br/>
+         <div class="row">
+            <div class="col-sm-3">
+               <label>Start Date<label>
+            </div>
+            <div class="col-sm-1">
+                <input id="refdate" type="date">
+            </div>
+         </div>
+         <br>
+         <div class="row">
+         </div>
+         <div class="row">
+            <div class="col-sm-3">
+            </div>
+            <div class="col-sm-1">
+                <button id="btnSubmit" class="btn btn-primary">Submit</button>
+            </div>
+         </div>
+         <br/>
+
+      </div>
+      <div class="col-sm-1">
+      </div>
+      <div class="col-sm-6">
+         <div class="row">
+             <canvas id="exhange_rate_chart" width="60" height="40"></canvas>
+         </div>
+         <br/>
+         <br/>
+        <div class="row">
+             <div id="table-container" width="60" height="40"></div>
+         </div>
+
+      </div>
+   </div>
+</div>
+{% endblock %}

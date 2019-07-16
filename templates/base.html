@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    select {
+        background:  #e0e0eb;
+        height: 30px;
+    }
+    option {
+        height: 30px;
+    }
+
+    input {
+        background:  #e0e0eb;
+          height: 30px;
+          width: 163px;
+    }
+    .left_section {
+      background:  #e1d0d0;
+    }
+</style>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+
+  <title>Forex App</title>
+  {% include 'base/css.html' %}
+
+</head>
+<body>
+   {% include 'base/js.html' %}
+
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+  <script>
+    $(document).ready(function(){
+      {% block jquery %}
+      {% endblock %}
+    })
+   </script>
+</body>
+</html>
