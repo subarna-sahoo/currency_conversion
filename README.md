@@ -35,3 +35,13 @@ python manage.py runserver          # http://localhost:8000
 Rates come from [`exchangeratesapi.io`](https://exchangeratesapi.io), with responses cached by `requests-cache`.
 
 > **Note:** exchangeratesapi.io now requires an API key, and the `/history` endpoint used here has been replaced. To run this today, switch to the provider's current timeseries endpoint (with an access key) or to a free alternative such as [Frankfurter](https://www.frankfurter.app).
+
+## Configuration
+
+Secrets are read from **environment variables**, so nothing sensitive lives in the code. Copy [`.env.example`](.env.example) to `.env` (it is git-ignored) or export the variables in your shell:
+
+| Variable | Purpose |
+|---|---|
+| `DJANGO_SECRET_KEY` | Django `SECRET_KEY`. If unset, a random key is generated at startup (fine for local dev). |
+
+The same values are stored as **GitHub Actions secrets** on this repo (*Settings → Secrets and variables → Actions*), so CI/CD workflows can use them as `${{ secrets.NAME }}`.
